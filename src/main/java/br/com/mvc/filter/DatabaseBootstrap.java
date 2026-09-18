@@ -12,23 +12,34 @@ import java.sql.Statement;
 public class DatabaseBootstrap implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        try (Connection con = ConnectionFactory.getConnection(); Statement st = con.createStatement()) {
-            st.execute("CREATE TABLE IF NOT EXISTS filmes (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    "titulo VARCHAR(150) NOT NULL, " +
-                    "ano_lancamento INT NOT NULL)");
-            st.execute("CREATE TABLE IF NOT EXISTS categorias (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    "nome VARCHAR(100) NOT NULL)");
-            st.execute("CREATE TABLE IF NOT EXISTS avaliacoes (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    "filme_id INT NOT NULL, " +
-                    "categoria_id INT NOT NULL, " +
-                    "nota INT NOT NULL)");
-            popularSeVazio(st);
-        } catch (SQLException e) {
-            throw new IllegalStateException("Falha ao preparar o banco.", e);
+        SQLException ultimo = null;
+        for (int tentativa = 1; tentativa <= 20; tentativa++) {
+            try (Connection con = ConnectionFactory.getConnection(); Statement st = con.createStatement()) {
+                st.execute("CREATE TABLE IF NOT EXISTS filmes (" +
+                        "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                        "titulo VARCHAR(150) NOT NULL, " +
+                        "ano_lancamento INT NOT NULL)");
+                st.execute("CREATE TABLE IF NOT EXISTS categorias (" +
+                        "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                        "nome VARCHAR(100) NOT NULL)");
+                st.execute("CREATE TABLE IF NOT EXISTS avaliacoes (" +
+                        "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                        "filme_id INT NOT NULL, " +
+                        "categoria_id INT NOT NULL, " +
+                        "nota INT NOT NULL)");
+                popularSeVazio(st);
+                return;
+            } catch (SQLException e) {
+                ultimo = e;
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException("Falha ao preparar o banco.", e);
+                }
+            }
         }
+        throw new IllegalStateException("Falha ao preparar o banco.", ultimo);
     }
 
     private void popularSeVazio(Statement st) throws SQLException {

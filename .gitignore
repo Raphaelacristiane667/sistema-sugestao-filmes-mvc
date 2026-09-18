@@ -11,3 +11,5 @@ deploy/
 .project
 .DS_Store
 Thumbs.db
+oracleJdk-*/
+**/oracleJdk-*/

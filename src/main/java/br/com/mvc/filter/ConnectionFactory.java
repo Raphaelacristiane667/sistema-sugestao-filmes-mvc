@@ -24,7 +24,7 @@ public final class ConnectionFactory {
                 Class.forName("org.h2.Driver");
             } else {
                 String host = envOrDefault("DB_HOST", "mysql");
-                URL = "jdbc:mysql://" + host + ":3306/mvc_java?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+                URL = "jdbc:mysql://" + host + ":3306/mvc_java?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci";
                 USER = "mvc_user";
                 PASSWORD = "mvc123";
                 Class.forName("com.mysql.cj.jdbc.Driver");
