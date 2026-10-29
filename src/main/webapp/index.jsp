@@ -25,6 +25,10 @@
       <strong>Avaliações</strong>
       <span>Dê nota às sugestões, de 0 a 10.</span>
     </a>
+    <a class="atalho" href="${pageContext.request.contextPath}/docs/">
+      <strong>API REST</strong>
+      <span>Documentação Swagger dos endpoints JSON.</span>
+    </a>
   </div>
 </main>
 </body>
