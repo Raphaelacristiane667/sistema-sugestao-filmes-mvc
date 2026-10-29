@@ -1,18 +1,23 @@
 package br.com.mvc.dao;
 
-import br.com.mvc.filter.ConnectionFactory;
+import br.com.mvc.config.ConnectionFactory;
 import br.com.mvc.model.Filme;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FilmeDAO {
-    public void inserir(Filme filme) throws SQLException {
+    public int inserir(Filme filme) throws SQLException {
         String sql = "INSERT INTO filmes (titulo, ano_lancamento) VALUES (?, ?)";
-        try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, filme.getTitulo());
             ps.setInt(2, filme.getAnoLancamento());
             ps.executeUpdate();
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                keys.next();
+                return keys.getInt(1);
+            }
         }
     }
 
@@ -23,6 +28,34 @@ public class FilmeDAO {
             while (rs.next()) lista.add(new Filme(rs.getInt("id"), rs.getString("titulo"), rs.getInt("ano_lancamento")));
         }
         return lista;
+    }
+
+    public Optional<Filme> buscarPorId(int id) throws SQLException {
+        String sql = "SELECT id, titulo, ano_lancamento FROM filmes WHERE id = ?";
+        try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return Optional.empty();
+                return Optional.of(new Filme(rs.getInt("id"), rs.getString("titulo"), rs.getInt("ano_lancamento")));
+            }
+        }
+    }
+
+    public boolean atualizar(Filme filme) throws SQLException {
+        String sql = "UPDATE filmes SET titulo = ?, ano_lancamento = ? WHERE id = ?";
+        try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, filme.getTitulo());
+            ps.setInt(2, filme.getAnoLancamento());
+            ps.setInt(3, filme.getId());
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean excluir(int id) throws SQLException {
+        try (Connection con = ConnectionFactory.getConnection(); PreparedStatement ps = con.prepareStatement("DELETE FROM filmes WHERE id = ?")) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        }
     }
 
     public List<Filme> sugerirPorCategoria(int categoriaId) throws SQLException {
