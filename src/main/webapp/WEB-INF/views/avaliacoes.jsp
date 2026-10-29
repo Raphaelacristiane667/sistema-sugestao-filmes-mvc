@@ -14,6 +14,10 @@
     <p>A nota vai de 0 a 10 e entra na média usada nas sugestões.</p>
   </div>
 
+  <c:if test="${not empty erro}">
+    <p class="erro" role="alert"><c:out value="${erro}"/></p>
+  </c:if>
+
   <div class="grade">
     <section class="painel">
       <h2>Registrar avaliação</h2>
