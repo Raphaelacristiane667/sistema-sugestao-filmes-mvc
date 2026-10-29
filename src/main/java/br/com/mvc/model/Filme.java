@@ -5,6 +5,7 @@ public class Filme {
     private String titulo;
     private int anoLancamento;
     private Double media;
+    private int totalAvaliacoes;
 
     public Filme() {}
     public Filme(int id, String titulo, int anoLancamento) {
@@ -20,4 +21,6 @@ public class Filme {
     public void setAnoLancamento(int anoLancamento) { this.anoLancamento = anoLancamento; }
     public Double getMedia() { return media; }
     public void setMedia(Double media) { this.media = media; }
+    public int getTotalAvaliacoes() { return totalAvaliacoes; }
+    public void setTotalAvaliacoes(int totalAvaliacoes) { this.totalAvaliacoes = totalAvaliacoes; }
 }
