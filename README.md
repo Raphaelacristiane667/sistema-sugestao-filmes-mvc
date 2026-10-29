@@ -18,7 +18,7 @@ Tabelas: `filmes`, `categorias` e `avaliacoes`.
 - Java 17+, Jakarta Servlet 6, Tomcat 10.1
 - JSON com Gson
 - JDBC + MySQL 8.4 (Docker) ou H2 (execução local sem Docker e testes)
-- JSP + JSTL para as telas web
+- Front-end em HTML, CSS e JavaScript puro, que consome a própria API REST com `fetch`
 - JUnit 4 para os testes da camada Service
 - OpenAPI 3 / Swagger UI e coleção do Postman para a documentação
 
@@ -29,7 +29,6 @@ Requisição HTTP
    │
    ▼
 Controller   br.com.mvc.controller.api   recebe a requisição, lê/escreve JSON, devolve o status HTTP
-   │         br.com.mvc.controller       telas web (JSP) que usam os mesmos services
    ▼
 Service      br.com.mvc.service          regras de negócio e validações
    │
@@ -46,11 +45,23 @@ MySQL
 | `br.com.mvc.dao` | `FilmeDAO`, `CategoriaDAO`, `AvaliacaoDAO` (CRUD + consultas) |
 | `br.com.mvc.service` | `FilmeService`, `CategoriaService`, `AvaliacaoService` |
 | `br.com.mvc.controller.api` | `FilmeApiController`, `CategoriaApiController`, `AvaliacaoApiController` e a base `ApiServlet` |
-| `br.com.mvc.controller` | Servlets das telas JSP |
 | `br.com.mvc.exception` | `ValidacaoException` (400), `RecursoNaoEncontradoException` (404), `ConflitoException` (409) |
 | `br.com.mvc.config` | `ConnectionFactory` (conexão JDBC) e `DatabaseBootstrap` (cria tabelas e dados de exemplo) |
 | `br.com.mvc.filter` | `EncodingFilter` (UTF-8) |
-| `src/main/webapp` | JSPs, CSS e a documentação Swagger (`/docs`) |
+| `src/main/webapp` | Front-end (`index.html`, `assets/app.css`, `assets/app.js`) e a documentação Swagger (`/docs`) |
+
+### Front-end
+
+O front (`http://localhost:8080/mvc/`) é uma página única que usa **só a API REST**:
+
+- **Início:** números do catálogo, média geral, top 5 e avaliações recentes.
+- **Filmes:** catálogo em cartões com a média, busca por título, ordenação e criar/editar/excluir.
+- **Sugestões:** escolha a categoria e veja o ranking pela média, com barra de nota.
+- **Avaliações:** dar nota de 0 a 10, filtrar por filme/categoria, editar e excluir.
+- **Categorias:** criar, renomear, excluir e ir direto para o ranking.
+
+As mensagens de erro da API (400, 404, 409) aparecem na tela, então dá para demonstrar
+as regras de negócio pelo próprio front.
 
 ### Regras de negócio (camada Service)
 
@@ -72,7 +83,7 @@ Para o Postman, importe [`docs/sugestao-filmes.postman_collection.json`](docs/su
 
 | Método | Rota | Descrição | Sucesso |
 |---|---|---|---|
-| GET | `/filmes` | Lista todos os filmes | 200 |
+| GET | `/filmes` | Lista todos os filmes (com `media` e `totalAvaliacoes`) | 200 |
 | GET | `/filmes/{id}` | Busca um filme | 200 |
 | POST | `/filmes` | Cadastra um filme | 201 |
 | PUT | `/filmes/{id}` | Atualiza um filme | 200 |
@@ -105,8 +116,8 @@ Exemplo de resposta de `GET /categorias/5/sugestoes`:
 
 ```json
 [
-  { "id": 5, "titulo": "Interestelar", "anoLancamento": 2014, "media": 10.0 },
-  { "id": 1, "titulo": "Matrix", "anoLancamento": 1999, "media": 9.0 }
+  { "id": 5, "titulo": "Interestelar", "anoLancamento": 2014, "media": 10.0, "totalAvaliacoes": 1 },
+  { "id": 1, "titulo": "Matrix", "anoLancamento": 1999, "media": 9.0, "totalAvaliacoes": 1 }
 ]
 ```
 
@@ -170,7 +181,7 @@ Com o Docker Desktop aberto, na pasta do projeto:
 docker compose up --build -d
 ```
 
-- Telas web: http://localhost:8080/mvc/
+- Front-end: http://localhost:8080/mvc/
 - API: http://localhost:8080/mvc/api/filmes
 - Swagger: http://localhost:8080/mvc/docs/
 

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CineSugere · Sugestão de Filmes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+
+<header class="topo">
+  <div class="topo-linha">
+    <a class="marca" href="#/inicio" aria-label="CineSugere, início">
+      <span class="marca-icone" aria-hidden="true">▶</span> CineSugere
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#/inicio" data-rota="inicio">Início</a>
+      <a href="#/filmes" data-rota="filmes">Filmes</a>
+      <a href="#/sugestoes" data-rota="sugestoes">Sugestões</a>
+      <a href="#/avaliacoes" data-rota="avaliacoes">Avaliações</a>
+      <a href="#/categorias" data-rota="categorias">Categorias</a>
+      <a class="nav-api" href="docs/" target="_blank" rel="noopener">API ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main id="conteudo" class="pagina" tabindex="-1">
+  <p class="carregando">Carregando…</p>
+</main>
+
+<footer class="rodape">
+  <span>Sistema de Sugestão de Filmes · API REST em Java (Controller → Service → DAO → MySQL)</span>
+  <a href="docs/" target="_blank" rel="noopener">Documentação da API</a>
+</footer>
+
+<dialog id="modal" class="modal" aria-labelledby="modal-titulo">
+  <form method="dialog" class="modal-caixa" id="modal-form" novalidate>
+    <header class="modal-topo">
+      <h2 id="modal-titulo"></h2>
+      <button type="button" class="icone-btn" data-fechar aria-label="Fechar">✕</button>
+    </header>
+    <div class="modal-corpo" id="modal-corpo"></div>
+    <p class="modal-erro" id="modal-erro" role="alert" hidden></p>
+    <footer class="modal-acoes">
+      <button type="button" class="btn btn-fantasma" data-fechar>Cancelar</button>
+      <button type="submit" class="btn" id="modal-ok">Salvar</button>
+    </footer>
+  </form>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
