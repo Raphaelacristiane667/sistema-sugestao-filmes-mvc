@@ -1,0 +1,294 @@
+openapi: 3.0.3
+info:
+  title: API de Sugestão de Filmes
+  version: "1.0"
+  description: |
+    API RESTful do Sistema de Sugestão de Filmes (Trabalho T2 de Aplicações para Internet).
+    CRUD de filmes, categorias e avaliações e sugestões de filmes por categoria,
+    ordenadas pela média das notas. Arquitetura MVC em camadas: Controller → Service → DAO → MySQL.
+servers:
+  - url: /mvc/api
+    description: Servidor atual
+  - url: http://localhost:8080/mvc/api
+    description: Local
+tags:
+  - name: Filmes
+  - name: Categorias
+  - name: Avaliações
+paths:
+  /filmes:
+    get:
+      tags: [Filmes]
+      summary: Lista todos os filmes (ordem alfabética)
+      responses:
+        "200":
+          description: Lista de filmes
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Filme" } }
+    post:
+      tags: [Filmes]
+      summary: Cadastra um filme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FilmeEntrada" }
+      responses:
+        "201":
+          description: Filme criado (cabeçalho Location aponta para o novo recurso)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Filme" }
+        "400": { $ref: "#/components/responses/Invalido" }
+  /filmes/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get:
+      tags: [Filmes]
+      summary: Busca um filme pelo id
+      responses:
+        "200":
+          description: Filme encontrado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Filme" }
+        "404": { $ref: "#/components/responses/NaoEncontrado" }
+    put:
+      tags: [Filmes]
+      summary: Atualiza um filme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FilmeEntrada" }
+      responses:
+        "200":
+          description: Filme atualizado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Filme" }
+        "400": { $ref: "#/components/responses/Invalido" }
+        "404": { $ref: "#/components/responses/NaoEncontrado" }
+    delete:
+      tags: [Filmes]
+      summary: Exclui um filme
+      description: Não é possível excluir um filme que tem avaliações (409).
+      responses:
+        "204": { description: Filme excluído }
+        "404": { $ref: "#/components/responses/NaoEncontrado" }
+        "409": { $ref: "#/components/responses/Conflito" }
+  /categorias:
+    get:
+      tags: [Categorias]
+      summary: Lista todas as categorias (ordem alfabética)
+      responses:
+        "200":
+          description: Lista de categorias
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Categoria" } }
+    post:
+      tags: [Categorias]
+      summary: Cadastra uma categoria
+      description: O nome não pode repetir (sem diferenciar maiúsculas/minúsculas).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CategoriaEntrada" }
+      responses:
+        "201":
+          description: Categoria criada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Categoria" }
+        "400": { $ref: "#/components/responses/Invalido" }
+        "409": { $ref: "#/components/responses/Conflito" }
+  /categorias/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get:
+      tags: [Categorias]
+      summary: Busca uma categoria pelo id
+      responses:
+        "200":
+          description: Categoria encontrada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Categoria" }
+        "404": { $ref: "#/components/responses/NaoEncontrado" }
+    put:
+      tags: [Categorias]
+      summary: Atualiza uma categoria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CategoriaEntrada" }
+      responses:
+        "200":
+          description: Categoria atualizada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Categoria" }
+        "400": { $ref: "#/components/responses/Invalido" }
+        "404": { $ref: "#/components/responses/NaoEncontrado" }
+        "409": { $ref: "#/components/responses/Conflito" }
+    delete:
+      tags: [Categorias]
+      summary: Exclui uma categoria
+      description: Não é possível excluir uma categoria que tem avaliações (409).
+      responses:
+        "204": { description: Categoria excluída }
+        "404": { $ref: "#/components/responses/NaoEncontrado" }
+        "409": { $ref: "#/components/responses/Conflito" }
+  /categorias/{id}/sugestoes:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get:
+      tags: [Categorias]
+      summary: Sugere filmes da categoria, do maior para o menor pela média das notas
+      responses:
+        "200":
+          description: Filmes avaliados na categoria, com a média
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/FilmeComMedia" } }
+        "404": { $ref: "#/components/responses/NaoEncontrado" }
+  /avaliacoes:
+    get:
+      tags: [Avaliações]
+      summary: Lista avaliações (mais recentes primeiro)
+      parameters:
+        - { name: filmeId, in: query, required: false, schema: { type: integer }, description: Filtra por filme }
+        - { name: categoriaId, in: query, required: false, schema: { type: integer }, description: Filtra por categoria }
+      responses:
+        "200":
+          description: Lista de avaliações
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Avaliacao" } }
+        "400": { $ref: "#/components/responses/Invalido" }
+    post:
+      tags: [Avaliações]
+      summary: Registra uma avaliação
+      description: A nota vai de 0 a 10; o filme e a categoria precisam existir.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AvaliacaoEntrada" }
+      responses:
+        "201":
+          description: Avaliação criada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Avaliacao" }
+        "400": { $ref: "#/components/responses/Invalido" }
+  /avaliacoes/{id}:
+    parameters: [{ $ref: "#/components/parameters/Id" }]
+    get:
+      tags: [Avaliações]
+      summary: Busca uma avaliação pelo id
+      responses:
+        "200":
+          description: Avaliação encontrada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Avaliacao" }
+        "404": { $ref: "#/components/responses/NaoEncontrado" }
+    put:
+      tags: [Avaliações]
+      summary: Atualiza uma avaliação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AvaliacaoEntrada" }
+      responses:
+        "200":
+          description: Avaliação atualizada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Avaliacao" }
+        "400": { $ref: "#/components/responses/Invalido" }
+        "404": { $ref: "#/components/responses/NaoEncontrado" }
+    delete:
+      tags: [Avaliações]
+      summary: Exclui uma avaliação
+      responses:
+        "204": { description: Avaliação excluída }
+        "404": { $ref: "#/components/responses/NaoEncontrado" }
+components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, minimum: 1 }
+  schemas:
+    FilmeEntrada:
+      type: object
+      required: [titulo, anoLancamento]
+      properties:
+        titulo: { type: string, maxLength: 150, example: Duna }
+        anoLancamento: { type: integer, minimum: 1888, example: 2021, description: "Entre 1888 e o ano atual + 5" }
+    Filme:
+      allOf:
+        - type: object
+          properties:
+            id: { type: integer, example: 6 }
+        - $ref: "#/components/schemas/FilmeEntrada"
+    FilmeComMedia:
+      allOf:
+        - $ref: "#/components/schemas/Filme"
+        - type: object
+          properties:
+            media: { type: number, format: double, example: 9.5 }
+    CategoriaEntrada:
+      type: object
+      required: [nome]
+      properties:
+        nome: { type: string, maxLength: 100, example: Terror }
+    Categoria:
+      allOf:
+        - type: object
+          properties:
+            id: { type: integer, example: 6 }
+        - $ref: "#/components/schemas/CategoriaEntrada"
+    AvaliacaoEntrada:
+      type: object
+      required: [filmeId, categoriaId, nota]
+      properties:
+        filmeId: { type: integer, example: 1 }
+        categoriaId: { type: integer, example: 5 }
+        nota: { type: integer, minimum: 0, maximum: 10, example: 8 }
+    Avaliacao:
+      allOf:
+        - type: object
+          properties:
+            id: { type: integer, example: 6 }
+        - $ref: "#/components/schemas/AvaliacaoEntrada"
+        - type: object
+          properties:
+            filmeTitulo: { type: string, example: Matrix }
+            categoriaNome: { type: string, example: Ficção Científica }
+    Erro:
+      type: object
+      properties:
+        status: { type: integer, example: 400 }
+        erro: { type: string, example: A nota deve estar entre 0 e 10. }
+  responses:
+    Invalido:
+      description: Dados inválidos (campo faltando, tipo errado, regra de validação)
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Erro" }
+    NaoEncontrado:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Erro" }
+    Conflito:
+      description: Conflito com os dados existentes
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Erro" }

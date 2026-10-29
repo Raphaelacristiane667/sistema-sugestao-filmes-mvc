@@ -1,0 +1,377 @@
+{
+  "info": {
+    "name": "Sugestão de Filmes - API T2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "CRUD de filmes, categorias e avaliações + sugestões por categoria. Ajuste a variável baseUrl se precisar."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/mvc/api"
+    }
+  ],
+  "item": [
+    {
+      "name": "Filmes",
+      "item": [
+        {
+          "name": "Listar filmes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/filmes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "filmes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar filme",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/filmes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "filmes",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar filme",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/filmes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "filmes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Duna\",\n  \"anoLancamento\": 2021\n}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar filme",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/filmes/6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "filmes",
+                "6"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Duna: Parte Um\",\n  \"anoLancamento\": 2021\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir filme",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/filmes/6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "filmes",
+                "6"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categorias",
+      "item": [
+        {
+          "name": "Listar categorias",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar categoria",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sugestões da categoria",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/5/sugestoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias",
+                "5",
+                "sugestoes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar categoria",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Terror\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar categoria",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias",
+                "6"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Suspense\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir categoria",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias",
+                "6"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Avaliações",
+      "item": [
+        {
+          "name": "Listar avaliações",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/avaliacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "avaliacoes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar avaliações filtradas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/avaliacoes?filmeId=1&categoriaId=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "avaliacoes"
+              ],
+              "query": [
+                {
+                  "key": "filmeId",
+                  "value": "1"
+                },
+                {
+                  "key": "categoriaId",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar avaliação",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/avaliacoes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "avaliacoes",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar avaliação",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/avaliacoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "avaliacoes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmeId\": 1,\n  \"categoriaId\": 5,\n  \"nota\": 8\n}"
+            }
+          }
+        },
+        {
+          "name": "Atualizar avaliação",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/avaliacoes/6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "avaliacoes",
+                "6"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmeId\": 1,\n  \"categoriaId\": 5,\n  \"nota\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir avaliação",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/avaliacoes/6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "avaliacoes",
+                "6"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
