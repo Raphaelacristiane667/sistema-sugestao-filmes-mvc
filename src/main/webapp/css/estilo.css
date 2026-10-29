@@ -320,3 +320,12 @@ button:active, .btn:active { transform: scale(0.98); }
     transition: none !important;
   }
 }
+
+.erro {
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  border: 1px solid #e0705e;
+  border-radius: var(--radius-in);
+  background: rgba(224, 112, 94, 0.12);
+  color: #ffd2c9;
+}

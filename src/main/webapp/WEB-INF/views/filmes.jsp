@@ -15,6 +15,10 @@
     <p>Cadastre um título ou escolha uma categoria para ver o ranking pela média das notas.</p>
   </div>
 
+  <c:if test="${not empty erro}">
+    <p class="erro" role="alert"><c:out value="${erro}"/></p>
+  </c:if>
+
   <div class="grade">
     <section class="painel">
       <h2>Cadastrar filme</h2>
