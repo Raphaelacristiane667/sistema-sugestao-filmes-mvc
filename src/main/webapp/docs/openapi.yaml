@@ -237,12 +237,14 @@ components:
           properties:
             id: { type: integer, example: 6 }
         - $ref: "#/components/schemas/FilmeEntrada"
+        - type: object
+          properties:
+            media: { type: number, format: double, nullable: true, example: 9.5, description: "Média das notas (todas as categorias); ausente se não houver avaliações" }
+            totalAvaliacoes: { type: integer, example: 2 }
     FilmeComMedia:
       allOf:
         - $ref: "#/components/schemas/Filme"
-        - type: object
-          properties:
-            media: { type: number, format: double, example: 9.5 }
+      description: Na rota de sugestões, a média e o total consideram só a categoria pedida.
     CategoriaEntrada:
       type: object
       required: [nome]
