@@ -13,3 +13,11 @@ deploy/
 Thumbs.db
 oracleJdk-*/
 **/oracleJdk-*/
+
+# Arquivos de ferramentas de IA (não versionar)
+.claude/
+CLAUDE.md
+.cursor/
+.cursorrules
+.cursorignore
+AGENTS.md

@@ -1,7 +1,7 @@
 services:
   mysql:
     image: mysql:8.4
-    container_name: mvc-java-mysql
+    container_name: sugestao-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: mvc_java
@@ -12,7 +12,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./api/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-umvc_user", "-pmvc123"]
       interval: 5s
@@ -20,9 +20,10 @@ services:
       retries: 20
       start_period: 20s
 
-  tomcat:
-    build: .
-    container_name: mvc-java-tomcat
+  # API RESTful (JSON): http://localhost:8080/api
+  api:
+    build: ./api
+    container_name: sugestao-api
     environment:
       DB_HOST: mysql
     ports:
@@ -30,6 +31,18 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+
+  # Sistema web (JSP), cliente da API: http://localhost:8081/mvc/
+  web:
+    build: ./web
+    container_name: sugestao-web
+    environment:
+      API_URL: http://api:8080/api
+      API_URL_PUBLICA: http://localhost:8080/api
+    ports:
+      - "8081:8080"
+    depends_on:
+      - api
 
 volumes:
   mysql_data:
