@@ -61,19 +61,28 @@ $env:MAVEN_OPTS = "-Dfile.encoding=UTF-8"
 
 Write-Host "Java: $env:JAVA_HOME"
 & java -version
-Write-Host "Compilando o WAR..."
-& (Join-Path $mavenHome "bin\mvn.cmd") -f (Join-Path $PSScriptRoot "pom.xml") -DskipTests package
-if ($LASTEXITCODE -ne 0) { throw "Falha no Maven." }
-
-$war = Join-Path $PSScriptRoot "deploy\mvc.war"
-if (-not (Test-Path $war)) { throw "WAR nao encontrado em $war" }
-
+$mvn = Join-Path $mavenHome "bin\mvn.cmd"
 $webapps = Join-Path $env:CATALINA_HOME "webapps"
-Copy-Item $war (Join-Path $webapps "mvc.war") -Force
-Remove-Item (Join-Path $webapps "mvc") -Recurse -Force -ErrorAction SilentlyContinue
+
+# Dois projetos separados: a API (api.war) e o sistema web que consome a API (mvc.war)
+foreach ($projeto in @(@{ Pasta = "api"; War = "api" }, @{ Pasta = "web"; War = "mvc" })) {
+    Write-Host "Compilando $($projeto.Pasta)..."
+    & $mvn -f (Join-Path $PSScriptRoot "$($projeto.Pasta)\pom.xml") -DskipTests package
+    if ($LASTEXITCODE -ne 0) { throw "Falha no Maven ($($projeto.Pasta))." }
+
+    $war = Join-Path $PSScriptRoot "$($projeto.Pasta)\target\$($projeto.War).war"
+    if (-not (Test-Path $war)) { throw "WAR nao encontrado em $war" }
+    Copy-Item $war (Join-Path $webapps "$($projeto.War).war") -Force
+    Remove-Item (Join-Path $webapps $projeto.War) -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+# O sistema web chama a API no mesmo Tomcat
+$env:API_URL = "http://localhost:8080/api"
 
 Write-Host ""
-Write-Host "Servidor em http://localhost:8080/mvc/"
+Write-Host "API:        http://localhost:8080/api/filmes"
+Write-Host "Swagger:    http://localhost:8080/api/docs/"
+Write-Host "Telas web:  http://localhost:8080/mvc/"
 Write-Host "Deixe esta janela aberta. Ctrl+C para parar."
 Set-Location $env:CATALINA_HOME
 & (Join-Path $env:CATALINA_HOME "bin\catalina.bat") run
