@@ -25,18 +25,32 @@ a mensagem de erro que ela devolve aparece na própria tela.
 
 | Variável | Padrão | Uso |
 |---|---|---|
-| `API_URL` | `http://localhost:8080/api` | Endereço da API usado pelos servlets |
+| `API_URL` | `http://localhost:8080/api` (no Docker: `http://host.docker.internal:8080/api`) | Endereço da API usado pelos servlets |
 | `API_URL_PUBLICA` | igual a `API_URL` | Endereço da API usado pelo navegador (página inicial e link da documentação) |
 
 ## Executar
+
+### Com Docker (container próprio)
+
+Com a API já rodando (`cd ../api && docker compose up --build -d`), nesta pasta:
+
+```bash
+docker compose up --build -d
+```
+
+Sobe só o container `cinesugere-mvc`, em http://localhost:8081/mvc/.
+Ele não tem banco: chama a API em `http://host.docker.internal:8080/api`
+(a porta 8080 publicada pelo container da API). Para apontar para outra API,
+defina `API_URL` antes do comando.
+
+### Com Maven
 
 ```bash
 cd web
 mvn package          # gera target/mvc.war
 ```
 
-Copie `target/mvc.war` para o `webapps` de um Tomcat 10.1 com a API rodando,
-ou use o `docker compose` / `rodar-local.ps1` da raiz, que sobem tudo junto.
+Copie `target/mvc.war` para o `webapps` de um Tomcat 10.1 com a API rodando.
 
 ## Testes
 

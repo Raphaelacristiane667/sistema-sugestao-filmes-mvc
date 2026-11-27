@@ -20,7 +20,7 @@ A API e o sistema web são **dois projetos separados**, cada um com seu `pom.xml
 | Pasta | Projeto | Endereço |
 |---|---|---|
 | [`api/`](api) | **API RESTful** (JSON) em camadas Controller → Service → DAO → MySQL. Documentação Swagger e coleção do Postman. | http://localhost:8080/api |
-| [`web/`](web) | **Sistema web** (JSP). Não acessa o banco: consome a API por HTTP. | http://localhost:8081/mvc/ (Docker) |
+| [`web/`](web) | **Sistema web** (JSP). Não acessa o banco: consome a API por HTTP. | http://localhost:8081/mvc/ |
 
 ```
 Navegador ──► web (JSP + Servlets) ──HTTP/JSON──► api (Controller → Service → DAO) ──► MySQL
@@ -33,21 +33,32 @@ Navegador ──► web (JSP + Servlets) ──HTTP/JSON──► api (Controlle
 
 ## Como executar
 
-### Com Docker (MySQL 8.4 + API + web)
+### Com Docker: cada projeto no seu container
 
-Com o Docker Desktop aberto, nesta pasta:
+A API e o MVC têm **cada um o seu `docker-compose.yml`** e sobem em containers separados.
+O MVC não enxerga o banco: ele chama a API pela porta 8080, por HTTP.
+
+| Projeto | Containers | Endereço |
+|---|---|---|
+| `api/` | `cinesugere-mysql` + `cinesugere-api` | http://localhost:8080/api/filmes (Swagger: http://localhost:8080/api/docs/) |
+| `web/` (MVC) | `cinesugere-mvc` | http://localhost:8081/mvc/ |
+
+Com o Docker Desktop aberto, suba **primeiro a API** e depois o MVC:
 
 ```bash
+cd api
 docker compose up --build -d
+
+cd ../web
+docker compose up --build -d
+
+docker ps        # mostra os 3 containers, em dois projetos (cinesugere-api e cinesugere-mvc)
 ```
 
-| Serviço | Endereço |
-|---|---|
-| API | http://localhost:8080/api/filmes |
-| Swagger | http://localhost:8080/api/docs/ |
-| Telas web | http://localhost:8081/mvc/ |
+Para parar: `docker compose down` dentro de cada pasta (na `api/`, `docker compose down -v` apaga o banco).
 
-Para começar do zero: `docker compose down -v`.
+Atalho opcional: `docker compose up --build -d` na raiz sobe os dois projetos de uma vez
+(o `docker-compose.yml` da raiz só inclui `api/docker-compose.yml` e `web/docker-compose.yml`).
 
 ### Sem Docker (Windows, banco H2 local)
 

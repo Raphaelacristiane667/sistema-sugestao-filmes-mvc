@@ -151,20 +151,22 @@ curl http://localhost:8080/api/categorias/5/sugestoes
 
 ## Como executar
 
-### Com Docker (MySQL 8.4 + API + sistema web)
+### Com Docker (MySQL 8.4 + API, containers próprios)
 
-Na **raiz do repositório** (pasta acima desta), com o Docker Desktop aberto:
+Nesta pasta (`api/`), com o Docker Desktop aberto:
 
 ```bash
 docker compose up --build -d
 ```
 
+Sobe os containers `cinesugere-mysql` e `cinesugere-api`.
+
 - API: http://localhost:8080/api/filmes
 - Swagger: http://localhost:8080/api/docs/
-- Telas web: http://localhost:8081/mvc/
 
 O MySQL é criado com o [`init.sql`](init.sql) (tabelas e dados de exemplo).
 Para começar do zero: `docker compose down -v`.
+O sistema web (MVC) é outro projeto, em [`../web`](../web), com o seu próprio container.
 
 ### Só a API, com Maven
 

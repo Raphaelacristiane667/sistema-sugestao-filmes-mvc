@@ -1,48 +1,8 @@
-services:
-  mysql:
-    image: mysql:8.4
-    container_name: sugestao-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mvc_java
-      MYSQL_USER: mvc_user
-      MYSQL_PASSWORD: mvc123
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./api/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-umvc_user", "-pmvc123"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-      start_period: 20s
-
-  # API RESTful (JSON): http://localhost:8080/api
-  api:
-    build: ./api
-    container_name: sugestao-api
-    environment:
-      DB_HOST: mysql
-    ports:
-      - "8080:8080"
-    depends_on:
-      mysql:
-        condition: service_healthy
-
-  # Sistema web (JSP), cliente da API: http://localhost:8081/mvc/
-  web:
-    build: ./web
-    container_name: sugestao-web
-    environment:
-      API_URL: http://api:8080/api
-      API_URL_PUBLICA: http://localhost:8080/api
-    ports:
-      - "8081:8080"
-    depends_on:
-      - api
-
-volumes:
-  mysql_data:
+# Atalho opcional para subir os DOIS projetos de uma vez.
+# Cada um continua independente, com seu próprio compose e seus próprios containers:
+#   api/docker-compose.yml  ->  cinesugere-mysql + cinesugere-api   (porta 8080)
+#   web/docker-compose.yml  ->  cinesugere-mvc                       (porta 8081)
+# O MVC fala com a API só por HTTP, pela porta 8080 publicada.
+include:
+  - api/docker-compose.yml
+  - web/docker-compose.yml

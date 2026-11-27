@@ -1,0 +1,21 @@
+# Projeto do MVC (sozinho): telas JSP que consomem a API por HTTP.
+# Não tem banco: todos os dados vêm da API.
+# Suba a API primeiro (cd api && docker compose up --build -d), depois:
+#   cd web  &&  docker compose up --build -d
+#   Telas: http://localhost:8081/mvc/
+name: cinesugere-mvc
+
+services:
+  mvc:
+    build: .
+    container_name: cinesugere-mvc
+    environment:
+      # Endereço da API usado pelo servidor (servlets). host.docker.internal = o computador
+      # onde a API está publicada na porta 8080 (ela roda em outro container/projeto).
+      API_URL: ${API_URL:-http://host.docker.internal:8080/api}
+      # Endereço da API usado pelo navegador (página inicial e link do Swagger)
+      API_URL_PUBLICA: ${API_URL_PUBLICA:-http://localhost:8080/api}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8081:8080"
